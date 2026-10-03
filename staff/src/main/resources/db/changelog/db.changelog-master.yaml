@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - include:
+      file: changes/001-create-users-and-items.sql
+      relativeToChangelogFile: true
+  - include:
+      file: changes/002-create-loans.sql
+      relativeToChangelogFile: true
+
