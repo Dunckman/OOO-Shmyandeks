@@ -1,0 +1,110 @@
+paths:
+  health:
+    get:
+      tags: [Health]
+      operationId: getHealth
+      summary: Проверить работу приложения
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/schemas/HealthResponse'}
+        '406': {$ref: '#/responses/NotAcceptable'}
+        '500': {$ref: '#/responses/InternalError'}
+      security: []
+parameters:
+  Page:
+    name: page
+    in: query
+    schema: {type: integer, format: int32, minimum: 0, default: 0}
+  Size:
+    name: size
+    in: query
+    schema: {type: integer, format: int32, minimum: 1, maximum: 100, default: 20}
+  ItemId:
+    name: itemId
+    in: path
+    required: true
+    schema: {type: string, format: uuid}
+  LoanId:
+    name: loanId
+    in: path
+    required: true
+    schema: {type: string, format: uuid}
+  LoanStatus:
+    name: status
+    in: query
+    schema: {$ref: loans.yaml#/schemas/LoanStatus}
+securitySchemes:
+  SessionAuth: {type: apiKey, in: cookie, name: JSESSIONID}
+  CsrfProtection: {type: apiKey, in: header, name: X-CSRF-TOKEN}
+responses:
+  BadRequest:
+    description: Некорректный запрос
+    content:
+      application/json:
+        schema: {$ref: openapi.yaml#/components/schemas/ApiError}
+  Unauthorized:
+    description: Требуется вход
+    content:
+      application/json:
+        schema: {$ref: openapi.yaml#/components/schemas/ApiError}
+  Forbidden:
+    description: Нет доступа или CSRF-токена
+    content:
+      application/json:
+        schema: {$ref: openapi.yaml#/components/schemas/ApiError}
+  NotFound:
+    description: Не найдено
+    content:
+      application/json:
+        schema: {$ref: openapi.yaml#/components/schemas/ApiError}
+  Conflict:
+    description: Конфликт данных
+    content:
+      application/json:
+        schema: {$ref: openapi.yaml#/components/schemas/ApiError}
+  TooManyRequests:
+    description: Лимит попыток входа
+    content:
+      application/json:
+        schema: {$ref: openapi.yaml#/components/schemas/ApiError}
+    headers:
+      Retry-After:
+        schema: {type: integer}
+  InternalError:
+    description: Ошибка сервера
+    content:
+      application/json:
+        schema: {$ref: openapi.yaml#/components/schemas/ApiError}
+  NotImplemented:
+    description: Заглушка
+    content:
+      application/json:
+        schema: {$ref: openapi.yaml#/components/schemas/ApiError}
+  UnsupportedMediaType:
+    description: Нужен application/json
+    content:
+      application/json:
+        schema: {$ref: openapi.yaml#/components/schemas/ApiError}
+  NotAcceptable:
+    description: Ответ только application/json
+    content:
+      application/json:
+        schema: {$ref: openapi.yaml#/components/schemas/ApiError}
+schemas:
+  ApiError:
+    type: object
+    required: [code, message]
+    properties:
+      code: {type: string}
+      message: {type: string}
+      fields:
+        type: array
+        items: {type: string}
+  HealthResponse:
+    type: object
+    required: [status]
+    properties:
+      status: {type: string, enum: [UP]}

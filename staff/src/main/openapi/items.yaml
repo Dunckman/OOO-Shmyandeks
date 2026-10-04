@@ -1,0 +1,134 @@
+paths:
+  collection:
+    get:
+      tags: [Items]
+      operationId: listItems
+      summary: Получить каталог
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/schemas/ItemPage'}
+        '400': {$ref: common.yaml#/responses/BadRequest}
+        '401': {$ref: common.yaml#/responses/Unauthorized}
+        '406': {$ref: common.yaml#/responses/NotAcceptable}
+        '500': {$ref: common.yaml#/responses/InternalError}
+        '501': {$ref: common.yaml#/responses/NotImplemented}
+      parameters:
+      - {$ref: common.yaml#/parameters/Page}
+      - {$ref: common.yaml#/parameters/Size}
+    post:
+      tags: [Items]
+      operationId: createItem
+      summary: Создать карточку предмета
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: {$ref: '#/schemas/ItemResponse'}
+        '400': {$ref: common.yaml#/responses/BadRequest}
+        '401': {$ref: common.yaml#/responses/Unauthorized}
+        '403': {$ref: common.yaml#/responses/Forbidden}
+        '406': {$ref: common.yaml#/responses/NotAcceptable}
+        '409': {$ref: common.yaml#/responses/Conflict}
+        '415': {$ref: common.yaml#/responses/UnsupportedMediaType}
+        '500': {$ref: common.yaml#/responses/InternalError}
+        '501': {$ref: common.yaml#/responses/NotImplemented}
+      security:
+      - SessionAuth: []
+        CsrfProtection: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/schemas/CreateItemRequest'}
+  single:
+    get:
+      tags: [Items]
+      operationId: getItem
+      summary: Получить карточку предмета
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/schemas/ItemResponse'}
+        '400': {$ref: common.yaml#/responses/BadRequest}
+        '401': {$ref: common.yaml#/responses/Unauthorized}
+        '404': {$ref: common.yaml#/responses/NotFound}
+        '406': {$ref: common.yaml#/responses/NotAcceptable}
+        '500': {$ref: common.yaml#/responses/InternalError}
+        '501': {$ref: common.yaml#/responses/NotImplemented}
+      parameters:
+      - {$ref: common.yaml#/parameters/ItemId}
+    put:
+      tags: [Items]
+      operationId: updateItem
+      summary: Обновить карточку и допуск
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/schemas/ItemResponse'}
+        '400': {$ref: common.yaml#/responses/BadRequest}
+        '401': {$ref: common.yaml#/responses/Unauthorized}
+        '403': {$ref: common.yaml#/responses/Forbidden}
+        '404': {$ref: common.yaml#/responses/NotFound}
+        '406': {$ref: common.yaml#/responses/NotAcceptable}
+        '409': {$ref: common.yaml#/responses/Conflict}
+        '415': {$ref: common.yaml#/responses/UnsupportedMediaType}
+        '500': {$ref: common.yaml#/responses/InternalError}
+        '501': {$ref: common.yaml#/responses/NotImplemented}
+      security:
+      - SessionAuth: []
+        CsrfProtection: []
+      parameters:
+      - {$ref: common.yaml#/parameters/ItemId}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/schemas/UpdateItemRequest'}
+schemas:
+  CreateItemRequest:
+    type: object
+    additionalProperties: false
+    required: [inventoryNumber, name, conditionDescription, issueAllowed]
+    properties:
+      inventoryNumber: {type: string}
+      name: {type: string}
+      conditionDescription: {type: string}
+      issueAllowed: {type: boolean}
+  UpdateItemRequest:
+    type: object
+    additionalProperties: false
+    required: [name, conditionDescription, issueAllowed]
+    properties:
+      name: {type: string}
+      conditionDescription: {type: string}
+      issueAllowed: {type: boolean}
+  ItemResponse:
+    description: occupied — предмет выдан; available — разрешена новая выдача.
+    type: object
+    required: [id, inventoryNumber, name, conditionDescription, issueAllowed, occupied, available]
+    properties:
+      id: {type: string, format: uuid}
+      inventoryNumber: {type: string}
+      name: {type: string}
+      conditionDescription: {type: string}
+      issueAllowed: {type: boolean}
+      occupied: {type: boolean}
+      available: {type: boolean}
+  ItemPage:
+    type: object
+    required: [content, page, size, totalElements]
+    properties:
+      content:
+        type: array
+        items: {$ref: '#/schemas/ItemResponse'}
+      page: {type: integer, format: int32}
+      size: {type: integer, format: int32}
+      totalElements: {type: integer, format: int64}

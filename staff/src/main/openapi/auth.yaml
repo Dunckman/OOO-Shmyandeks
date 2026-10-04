@@ -1,0 +1,102 @@
+paths:
+  login:
+    post:
+      tags: [Auth]
+      operationId: login
+      summary: Войти под учебной учетной записью
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/schemas/UserResponse'}
+          headers:
+            Set-Cookie:
+              schema: {type: string}
+        '400': {$ref: common.yaml#/responses/BadRequest}
+        '401': {$ref: common.yaml#/responses/Unauthorized}
+        '403': {$ref: common.yaml#/responses/Forbidden}
+        '406': {$ref: common.yaml#/responses/NotAcceptable}
+        '415': {$ref: common.yaml#/responses/UnsupportedMediaType}
+        '429': {$ref: common.yaml#/responses/TooManyRequests}
+        '500': {$ref: common.yaml#/responses/InternalError}
+        '501': {$ref: common.yaml#/responses/NotImplemented}
+      security:
+      - CsrfProtection: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/schemas/LoginRequest'}
+  logout:
+    post:
+      tags: [Auth]
+      operationId: logout
+      summary: Завершить текущую сессию
+      responses:
+        '204':
+          description: No Content
+          headers:
+            Set-Cookie:
+              schema: {type: string}
+        '401': {$ref: common.yaml#/responses/Unauthorized}
+        '403': {$ref: common.yaml#/responses/Forbidden}
+        '406': {$ref: common.yaml#/responses/NotAcceptable}
+        '500': {$ref: common.yaml#/responses/InternalError}
+        '501': {$ref: common.yaml#/responses/NotImplemented}
+      security:
+      - SessionAuth: []
+        CsrfProtection: []
+  me:
+    get:
+      tags: [Auth]
+      operationId: getCurrentUser
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/schemas/UserResponse'}
+        '401': {$ref: common.yaml#/responses/Unauthorized}
+        '406': {$ref: common.yaml#/responses/NotAcceptable}
+        '500': {$ref: common.yaml#/responses/InternalError}
+        '501': {$ref: common.yaml#/responses/NotImplemented}
+  csrf:
+    get:
+      tags: [Auth]
+      operationId: getCsrfToken
+      summary: Получить CSRF-токен
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/schemas/CsrfTokenResponse'}
+          headers:
+            Set-Cookie:
+              schema: {type: string}
+        '406': {$ref: common.yaml#/responses/NotAcceptable}
+        '500': {$ref: common.yaml#/responses/InternalError}
+      security: []
+schemas:
+  Role: {type: string, enum: [USER, STAFF]}
+  LoginRequest:
+    type: object
+    additionalProperties: false
+    required: [login, password]
+    properties:
+      login: {type: string}
+      password: {type: string, format: password, writeOnly: true}
+  UserResponse:
+    type: object
+    required: [id, login, role]
+    properties:
+      id: {type: string, format: uuid}
+      login: {type: string}
+      role: {$ref: '#/schemas/Role'}
+  CsrfTokenResponse:
+    type: object
+    required: [token, headerName]
+    properties:
+      token: {type: string}
+      headerName: {type: string, enum: [X-CSRF-TOKEN]}

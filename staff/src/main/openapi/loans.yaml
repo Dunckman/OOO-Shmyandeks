@@ -1,0 +1,141 @@
+paths:
+  collection:
+    get:
+      tags: [Loans]
+      operationId: listLoans
+      summary: Получить выдачи
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/schemas/LoanPage'}
+        '400': {$ref: common.yaml#/responses/BadRequest}
+        '401': {$ref: common.yaml#/responses/Unauthorized}
+        '406': {$ref: common.yaml#/responses/NotAcceptable}
+        '500': {$ref: common.yaml#/responses/InternalError}
+        '501': {$ref: common.yaml#/responses/NotImplemented}
+      parameters:
+      - {$ref: common.yaml#/parameters/Page}
+      - {$ref: common.yaml#/parameters/Size}
+      - {$ref: common.yaml#/parameters/LoanStatus}
+    post:
+      tags: [Loans]
+      operationId: createLoan
+      summary: Оформить выдачу  
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: {$ref: '#/schemas/LoanResponse'}
+        '400': {$ref: common.yaml#/responses/BadRequest}
+        '401': {$ref: common.yaml#/responses/Unauthorized}
+        '403': {$ref: common.yaml#/responses/Forbidden}
+        '404': {$ref: common.yaml#/responses/NotFound}
+        '406': {$ref: common.yaml#/responses/NotAcceptable}
+        '409': {$ref: common.yaml#/responses/Conflict}
+        '415': {$ref: common.yaml#/responses/UnsupportedMediaType}
+        '500': {$ref: common.yaml#/responses/InternalError}
+        '501': {$ref: common.yaml#/responses/NotImplemented}
+      security:
+      - SessionAuth: []
+        CsrfProtection: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/schemas/CreateLoanRequest'}
+  single:
+    get:
+      tags: [Loans]
+      operationId: getLoan
+      summary: Получить выдачу по ID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/schemas/LoanResponse'}
+        '400': {$ref: common.yaml#/responses/BadRequest}
+        '401': {$ref: common.yaml#/responses/Unauthorized}
+        '404': {$ref: common.yaml#/responses/NotFound}
+        '406': {$ref: common.yaml#/responses/NotAcceptable}
+        '500': {$ref: common.yaml#/responses/InternalError}
+        '501': {$ref: common.yaml#/responses/NotImplemented}
+      parameters:
+      - {$ref: common.yaml#/parameters/LoanId}
+  return:
+    post:
+      tags: [Loans]
+      operationId: returnLoan
+      summary: Принять возврат  
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/schemas/LoanResponse'}
+        '400': {$ref: common.yaml#/responses/BadRequest}
+        '401': {$ref: common.yaml#/responses/Unauthorized}
+        '403': {$ref: common.yaml#/responses/Forbidden}
+        '404': {$ref: common.yaml#/responses/NotFound}
+        '406': {$ref: common.yaml#/responses/NotAcceptable}
+        '409': {$ref: common.yaml#/responses/Conflict}
+        '415': {$ref: common.yaml#/responses/UnsupportedMediaType}
+        '500': {$ref: common.yaml#/responses/InternalError}
+        '501': {$ref: common.yaml#/responses/NotImplemented}
+      security:
+      - SessionAuth: []
+        CsrfProtection: []
+      parameters:
+      - {$ref: common.yaml#/parameters/LoanId}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/schemas/ReturnLoanRequest'}
+schemas:
+  LoanStatus: {type: string, enum: [ACTIVE, RETURNED]}
+  CreateLoanRequest:
+    type: object
+    additionalProperties: false
+    required: [itemId, borrowerId, dueAt, issuedCondition]
+    properties:
+      itemId: {type: string, format: uuid}
+      borrowerId: {type: string, format: uuid}
+      dueAt: {type: string, format: date-time}
+      issuedCondition: {type: string}
+  ReturnLoanRequest:
+    type: object
+    additionalProperties: false
+    required: [returnedCondition, issueAllowed]
+    properties:
+      returnedCondition: {type: string}
+      issueAllowed: {type: boolean}
+  LoanResponse:
+    description: Поля возврата заполнены только у завершенной выдачи.
+    type: object
+    required: [id, itemId, borrowerId, issuedById, issuedAt, dueAt, issuedCondition, status]
+    properties:
+      id: {type: string, format: uuid}
+      itemId: {type: string, format: uuid}
+      borrowerId: {type: string, format: uuid}
+      issuedById: {type: string, format: uuid}
+      issuedAt: {type: string, format: date-time}
+      dueAt: {type: string, format: date-time}
+      issuedCondition: {type: string}
+      status: {$ref: '#/schemas/LoanStatus'}
+      returnedAt: {type: string, format: date-time, nullable: true}
+      returnedById: {type: string, format: uuid, nullable: true}
+      returnedCondition: {type: string, nullable: true}
+  LoanPage:
+    type: object
+    required: [content, page, size, totalElements]
+    properties:
+      content:
+        type: array
+        items: {$ref: '#/schemas/LoanResponse'}
+      page: {type: integer, format: int32}
+      size: {type: integer, format: int32}
+      totalElements: {type: integer, format: int64}

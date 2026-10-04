@@ -1,0 +1,38 @@
+paths:
+  collection:
+    get:
+      tags: [Students]
+      operationId: listStudents
+      summary: Получить учебные аккаунты студентов
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/schemas/StudentPage'}
+        '400': {$ref: common.yaml#/responses/BadRequest}
+        '401': {$ref: common.yaml#/responses/Unauthorized}
+        '403': {$ref: common.yaml#/responses/Forbidden}
+        '406': {$ref: common.yaml#/responses/NotAcceptable}
+        '500': {$ref: common.yaml#/responses/InternalError}
+        '501': {$ref: common.yaml#/responses/NotImplemented}
+      parameters:
+      - {$ref: common.yaml#/parameters/Page}
+      - {$ref: common.yaml#/parameters/Size}
+schemas:
+  StudentResponse:
+    type: object
+    required: [id, login]
+    properties:
+      id: {type: string, format: uuid}
+      login: {type: string}
+  StudentPage:
+    type: object
+    required: [content, page, size, totalElements]
+    properties:
+      content:
+        type: array
+        items: {$ref: '#/schemas/StudentResponse'}
+      page: {type: integer, format: int32}
+      size: {type: integer, format: int32}
+      totalElements: {type: integer, format: int64}

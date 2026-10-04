@@ -1,0 +1,48 @@
+openapi: 3.0.3
+info:
+  title: Стафф API
+  version: 0.1.0
+servers:
+- url: /
+tags:
+- name: Auth
+- name: Items
+- name: Students
+- name: Loans
+- name: Health
+security:
+- SessionAuth: []
+paths:
+  /health: {$ref: common.yaml#/paths/health}
+  /api/v1/auth/login: {$ref: auth.yaml#/paths/login}
+  /api/v1/auth/logout: {$ref: auth.yaml#/paths/logout}
+  /api/v1/auth/me: {$ref: auth.yaml#/paths/me}
+  /api/v1/auth/csrf: {$ref: auth.yaml#/paths/csrf}
+  /api/v1/items: {$ref: items.yaml#/paths/collection}
+  /api/v1/items/{itemId}: {$ref: items.yaml#/paths/single}
+  /api/v1/students: {$ref: students.yaml#/paths/collection}
+  /api/v1/loans: {$ref: loans.yaml#/paths/collection}
+  /api/v1/loans/{loanId}: {$ref: loans.yaml#/paths/single}
+  /api/v1/loans/{loanId}/return: {$ref: loans.yaml#/paths/return}
+components:
+  schemas:
+    Role: {$ref: auth.yaml#/schemas/Role}
+    LoginRequest: {$ref: auth.yaml#/schemas/LoginRequest}
+    UserResponse: {$ref: auth.yaml#/schemas/UserResponse}
+    CsrfTokenResponse: {$ref: auth.yaml#/schemas/CsrfTokenResponse}
+    ApiError: {$ref: common.yaml#/schemas/ApiError}
+    HealthResponse: {$ref: common.yaml#/schemas/HealthResponse}
+    CreateItemRequest: {$ref: items.yaml#/schemas/CreateItemRequest}
+    UpdateItemRequest: {$ref: items.yaml#/schemas/UpdateItemRequest}
+    ItemResponse: {$ref: items.yaml#/schemas/ItemResponse}
+    ItemPage: {$ref: items.yaml#/schemas/ItemPage}
+    LoanStatus: {$ref: loans.yaml#/schemas/LoanStatus}
+    CreateLoanRequest: {$ref: loans.yaml#/schemas/CreateLoanRequest}
+    ReturnLoanRequest: {$ref: loans.yaml#/schemas/ReturnLoanRequest}
+    LoanResponse: {$ref: loans.yaml#/schemas/LoanResponse}
+    LoanPage: {$ref: loans.yaml#/schemas/LoanPage}
+    StudentResponse: {$ref: students.yaml#/schemas/StudentResponse}
+    StudentPage: {$ref: students.yaml#/schemas/StudentPage}
+  securitySchemes:
+    SessionAuth: {$ref: common.yaml#/securitySchemes/SessionAuth}
+    CsrfProtection: {$ref: common.yaml#/securitySchemes/CsrfProtection}
