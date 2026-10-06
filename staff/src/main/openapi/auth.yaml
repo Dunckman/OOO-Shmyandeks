@@ -66,6 +66,7 @@ paths:
       tags: [Auth]
       operationId: getCsrfToken
       summary: Получить CSRF-токен
+      description: Сохраните cookie из ответа и отправляйте её вместе с X-CSRF-TOKEN в изменяющих запросах, включая вход и выход.
       responses:
         '200':
           description: OK

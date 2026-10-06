@@ -68,4 +68,14 @@
 - **Характер использования ИИ:** Агент подготовил OpenAPI спеку, настройку генерации Kotlin DTO и API-интерфейсов.
 - **Что вошло в проект:** контракт 14 ручек
 - **Фактическая проверка человеком:** `M3` проверил описание ручек и дополнил их.
-- **Результат:** [OpenAPI](staff/src/main/openapi/openapi.yaml), [контроллеры](staff/src/main/kotlin/org/shmyandeks/staff/api/controller), [сервисы](staff/src/main/kotlin/org/shmyandeks/staff/service), [настройки доступа](staff/src/main/kotlin/org/shmyandeks/staff/security/SecurityConfig.kt), [инструкция запуска](README.md#локальный-запуск)
+- **Результат:** [OpenAPI](staff/src/main/openapi/openapi.yaml), [контроллеры](staff/src/main/kotlin/org/shmyandeks/staff/api/controller), [сервисы](staff/src/main/kotlin/org/shmyandeks/staff/service), [настройки доступа](staff/src/main/kotlin/org/shmyandeks/staff/security/SecurityConfig.kt), [инструкция запуска](PROJECT.md#10-локальный-запуск)
+
+## Каталог и согласование репозитория
+
+- **Дата:** 2026-10-05
+- **Участник:** `M2`
+- **Задача:** создать каталог для бд.
+- **Характер использования ИИ:** Codex помог применить патч, добавить недостающий параметр сервиса и убрать заменённую заглушку. Затем сопоставил документы, OpenAPI, исходники и историю Git и подготовил точечные правки.
+- **Что вошло в проект:** интеграция каталога, актуальное описание реализованных и запланированных функций, исправленные ссылки, ограничения входных полей и правила доступа в OpenAPI, веб-контекст для существующих тестов БД, недостающие записи вклада с хешами коммитов.
+- **Фактическая проверка человеком:** участник `M2` ознакомился с найденными несовместимостями патча и подтвердил их исправление перед коммитом. При сверке репозитория ограничил изменения согласованием документов и контракта и попросил не запускать приложение и тесты. Итоговые правки этой сверки подготовлены для просмотра, их проверка человеком ещё не завершена.
+- **Результат:** [каталог — коммит df41eef](https://github.com/Dunckman/OOO-Shmyandeks/commit/df41eef7004dc1043101ec70519c0dca9c0abb6f), [паспорт](PROJECT.md), [модель угроз](docs/threat-model.md), [проектные решения](docs/design-decisions.md), [OpenAPI](staff/src/main/openapi/openapi.yaml), [контекст тестов](staff/src/test/kotlin/org/shmyandeks/staff/StaffApplicationTests.kt), [вклад участников](CONTRIBUTIONS.md).

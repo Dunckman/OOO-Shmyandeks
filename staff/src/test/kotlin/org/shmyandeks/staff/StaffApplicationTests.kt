@@ -28,7 +28,7 @@ import org.shmyandeks.staff.domain.UserRole
 import java.time.Instant
 import java.util.UUID
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @Testcontainers
 class StaffApplicationTests @Autowired constructor(
     private val jdbc: JdbcTemplate,

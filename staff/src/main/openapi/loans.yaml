@@ -4,6 +4,7 @@ paths:
       tags: [Loans]
       operationId: listLoans
       summary: Получить выдачи
+      description: USER получает только свои выдачи; STAFF — все выдачи пункта. Это же ограничение действует для totalElements.
       responses:
         '200':
           description: OK
@@ -22,7 +23,8 @@ paths:
     post:
       tags: [Loans]
       operationId: createLoan
-      summary: Оформить выдачу  
+      summary: Оформить выдачу
+      description: Доступно только STAFF. Получатель должен иметь роль USER, а dueAt — быть позже серверного времени выдачи. Нарушение этих условий даёт 400.
       responses:
         '201':
           description: Created
@@ -51,6 +53,7 @@ paths:
       tags: [Loans]
       operationId: getLoan
       summary: Получить выдачу по ID
+      description: USER может прочитать только свою выдачу; чужая и несуществующая дают одинаковый 404. STAFF может прочитать любую выдачу пункта.
       responses:
         '200':
           description: OK
@@ -69,7 +72,8 @@ paths:
     post:
       tags: [Loans]
       operationId: returnLoan
-      summary: Принять возврат  
+      summary: Принять возврат
+      description: Доступно только STAFF. returnedCondition сохраняется в выдаче и становится текущим описанием предмета. Повторный возврат даёт 409; просрочка не мешает возврату.
       responses:
         '200':
           description: OK
@@ -105,13 +109,13 @@ schemas:
       itemId: {type: string, format: uuid}
       borrowerId: {type: string, format: uuid}
       dueAt: {type: string, format: date-time}
-      issuedCondition: {type: string}
+      issuedCondition: {type: string, minLength: 1, pattern: '[\s\S]*\S[\s\S]*'}
   ReturnLoanRequest:
     type: object
     additionalProperties: false
     required: [returnedCondition, issueAllowed]
     properties:
-      returnedCondition: {type: string}
+      returnedCondition: {type: string, minLength: 1, pattern: '[\s\S]*\S[\s\S]*'}
       issueAllowed: {type: boolean}
   LoanResponse:
     description: Поля возврата заполнены только у завершенной выдачи.

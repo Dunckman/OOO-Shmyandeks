@@ -4,6 +4,7 @@ paths:
       tags: [Students]
       operationId: listStudents
       summary: Получить учебные аккаунты студентов
+      description: Доступно только STAFF; возвращаются аккаунты с ролью USER.
       responses:
         '200':
           description: OK

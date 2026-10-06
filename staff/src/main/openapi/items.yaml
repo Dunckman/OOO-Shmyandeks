@@ -22,6 +22,7 @@ paths:
       tags: [Items]
       operationId: createItem
       summary: Создать карточку предмета
+      description: Доступно только STAFF.
       responses:
         '201':
           description: Created
@@ -67,6 +68,7 @@ paths:
       tags: [Items]
       operationId: updateItem
       summary: Обновить карточку и допуск
+      description: Доступно только STAFF. Передача inventoryNumber отклоняется с 409; номер после создания не меняется.
       responses:
         '200':
           description: OK
@@ -98,17 +100,17 @@ schemas:
     additionalProperties: false
     required: [inventoryNumber, name, conditionDescription, issueAllowed]
     properties:
-      inventoryNumber: {type: string}
-      name: {type: string}
-      conditionDescription: {type: string}
+      inventoryNumber: {type: string, minLength: 1, maxLength: 100, pattern: '[\s\S]*\S[\s\S]*'}
+      name: {type: string, minLength: 1, maxLength: 200, pattern: '[\s\S]*\S[\s\S]*'}
+      conditionDescription: {type: string, minLength: 1, pattern: '[\s\S]*\S[\s\S]*'}
       issueAllowed: {type: boolean}
   UpdateItemRequest:
     type: object
     additionalProperties: false
     required: [name, conditionDescription, issueAllowed]
     properties:
-      name: {type: string}
-      conditionDescription: {type: string}
+      name: {type: string, minLength: 1, maxLength: 200, pattern: '[\s\S]*\S[\s\S]*'}
+      conditionDescription: {type: string, minLength: 1, pattern: '[\s\S]*\S[\s\S]*'}
       issueAllowed: {type: boolean}
   ItemResponse:
     description: occupied — предмет выдан; available — разрешена новая выдача.
